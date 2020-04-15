@@ -1,0 +1,51 @@
+== Spring Simplicity: Build fast and reliable RESTful APIs in Java.
+
+The purpose of this project is to provide a lightweight and easy to use framework for
+building https://en.wikipedia.org/wiki/Representational_state_transfer[RESTful API]'s
+for small projects that depend on https://en.wikipedia.org/wiki/Relational_database[Relational Databases].
+
+It provides a Generic Controller implementation for a simple
+https://en.wikipedia.org/wiki/Create,_read,_update_and_delete[CRUD] API, easily extensible, based on the RestController
+class of the https://spring.io/guides/gs/rest-service/[Spring Boot Starter Web] project.
+It also provides a Generic DAO implementation for relational databases, based on the JdbcTemplate class of the
+http://projects.spring.io/spring-data-jdbc-ext/[Spring Data JDBC Extensions] project.
+In general, Spring Simplicity provides a fast start for
+https://projects.spring.io/spring-framework[Spring framework]-based projects.
+It’s intended for small applications where https://en.wikipedia.org/wiki/Java_Persistence_API[JPA] is an overkill
+and for applications that can benefit from the smaller (and faster!) execution code.
+
+This project is a direct conversion of the original
+https://github.com/alexpensato/spring-simplicity-kotlin[spring-simplicity-kotlin], so we chose to create a new
+repository, rather than a fork.
+
+== Design objectives
+
+* Simple, fast and lightweight: only a handful of classes, *no XML.*
+* Restful Controller for any data class out-of-the-box.
+* *Not a full-blown ORM*, this is a simple Data Mapper.
+* Just a https://en.wikipedia.org/wiki/Don't_repeat_yourself[DRY] CRUD API.
+* Reduced runtime reflection (compared to other Spring projects).
+* Standard repository interface from https://projects.spring.io/spring-data[Spring Data];
+allow easier migration to other Spring Data implementations (e.g. JPA, Couchbase…).
+footnote:[Since your code will rely only on interfaces from Spring Web and Spring Data projects, you are free to switch
+from `JdbcRepository` implementation (from this project) to `JpaRepository`, `GemfireRepository`, `GraphRepository`…
+see https://projects.spring.io/spring-data[Spring Data webpage]. They all implement the same common API.
+Of course don’t expect that switching from JDBC to e.g. JPA will be as simple as switching imported JAR dependencies –
+but at least you minimize the impact by using same DAO API.]
+* Minimalistic support for database dialect differences (e.g. transparent paging of results).
+* No relationship handling, lazy loading, dirty checking, multi-level caching, etc.
+
+== Contributions
+
+…are always welcome.
+Don’t hesitate to submit a https://github.com/alexpensato/spring-simplicity-java/issues[bug report] or a
+https://github.com/alexpensato/spring-simplicity-java/pulls[pull requests].
+
+When filling a bug report or submitting a new feature, please try including supporting test cases.
+
+
+== License
+
+This project is licensed under http://www.apache.org/licenses/LICENSE-2.0.html[Apache License 2.0].
+
+Although it is a tested library, use at your risk!
