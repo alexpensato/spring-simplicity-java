@@ -19,6 +19,7 @@ package org.pensatocode.simplicity.jdbc.sql;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
@@ -59,15 +60,20 @@ public class SqlGeneratorFactory {
     }
 
     /**
-     * @param dataSource The DataSource for which to find compatible
-     *        SQL Generator.
-     * @return An SQL Generator compatible with the given {@code dataSource}.
+     *
+     * @param jdbcTemplate@return An SQL Generator compatible with the given {@code dataSource}.
      * @throws DataAccessResourceFailureException if exception is thrown when
      *         trying to obtain Connection or MetaData from the
      *         {@code dataSource}.
      * @throws IllegalStateException if no compatible SQL Generator is found.
      */
-    public SqlGenerator getGenerator(DataSource dataSource) {
+    public SqlGenerator getGenerator(JdbcTemplate jdbcTemplate) {
+
+        if (jdbcTemplate == null || jdbcTemplate.getDataSource() == null) {
+            return new LimitOffsetSqlGenerator();
+        }
+
+        DataSource dataSource = jdbcTemplate.getDataSource();
 
         if (cache.containsKey(dataSource)) {
             return cache.get(dataSource);

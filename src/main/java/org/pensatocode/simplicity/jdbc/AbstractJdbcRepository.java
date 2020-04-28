@@ -21,6 +21,8 @@ import org.pensatocode.simplicity.jdbc.exception.NoRecordUpdatedException;
 import org.pensatocode.simplicity.jdbc.sql.SqlGenerator;
 import org.pensatocode.simplicity.jdbc.sql.SqlGeneratorFactory;
 import org.pensatocode.simplicity.jdbc.mapper.TransactionalRowMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -53,6 +55,8 @@ import static org.pensatocode.simplicity.util.StringUtil.convertToSnakeCase;
  * Implementation of {@link PagingAndSortingRepository} using {@link JdbcTemplate}
  */
 public abstract class AbstractJdbcRepository<T, ID extends Serializable> implements JdbcRepository<T, ID>, InitializingBean {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractJdbcRepository.class);
 
     protected TransactionalRowMapper<T> rowMapper;
     protected JdbcTemplate jdbcTemplate;
@@ -87,7 +91,9 @@ public abstract class AbstractJdbcRepository<T, ID extends Serializable> impleme
 
         String[] ids = { idName };
         this.tableDesc = new TableDescription(tableName, columns, selectClause, fromClause, ids);
-        this.sqlGenerator = SqlGeneratorFactory.getInstance().getGenerator(jdbcTemplate.getDataSource());
+        this.sqlGenerator = SqlGeneratorFactory.getInstance().getGenerator(jdbcTemplate);
+        log.info("SqlGenerator in " + this.getClass().getSimpleName() +
+                " is " + this.sqlGenerator.getClass().getSimpleName());
     }
 
     public AbstractJdbcRepository(@Autowired JdbcTemplate jdbcTemplate, TransactionalRowMapper<T> rowMapper, String tableName, Class<T> jClass, String idName) {
