@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "org.pensatocode.simplicity"
-version = "1.0.0"
+version = "2.0.0"
 description = "A tiny framework for building fast and reliable RESTful APIs in Java."
 java.sourceCompatibility = JavaVersion.VERSION_11
 

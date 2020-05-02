@@ -14,17 +14,16 @@ https://projects.spring.io/spring-framework[Spring framework]-based projects.
 It’s intended for small applications where https://en.wikipedia.org/wiki/Java_Persistence_API[JPA] is an overkill
 and for applications that can benefit from the smaller (and faster!) execution code.
 
-This project is a direct conversion of the original
-https://github.com/alexpensato/spring-simplicity-kotlin[spring-simplicity-kotlin], so we chose to create a new
-repository, rather than a fork.
+This project is currently in v2.0, where its main goal is to replace any runtime reflection and repetitive work
+with https://en.wikipedia.org/wiki/Ahead-of-time_compilation[AOT compilation] techniques.
 
 == Design objectives
 
 * Simple, fast and lightweight: only a handful of classes, *no XML.*
-* Restful Controller for any data class out-of-the-box.
-* *Not a full-blown ORM*, this is a simple Data Mapper.
+* Restful Controller for any entity class out-of-the-box.
+* *Not a full-blown ORM*, this is a simple Data Mapper using AOT compilation.
 * Just a https://en.wikipedia.org/wiki/Don't_repeat_yourself[DRY] CRUD API.
-* Reduced runtime reflection (compared to other Spring projects).
+* No additional runtime reflection (you can still use Spring's @Autowired annotation).
 * Standard repository interface from https://projects.spring.io/spring-data[Spring Data];
 allow easier migration to other Spring Data implementations (e.g. JPA, Couchbase…).
 footnote:[Since your code will rely only on interfaces from Spring Web and Spring Data projects, you are free to switch
