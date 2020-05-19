@@ -23,16 +23,17 @@ import static java.lang.Math.max;
 
 public final class StringUtil {
 
-    private StringUtil() {}
+    private StringUtil() {
+    }
 
     /**
      * Repeats the given String {@code count}-times to form a new String, with
      * the {@code separator} injected between.
      *
-     * @param str The string to repeat.
+     * @param str       The string to repeat.
      * @param separator The string to inject between.
-     * @param count Number of times to repeat {@code str}; negative treated
-     *              as zero.
+     * @param count     Number of times to repeat {@code str}; negative treated
+     *                  as zero.
      * @return A new String.
      */
     public static String repeat(String str, String separator, int count) {
@@ -46,6 +47,10 @@ public final class StringUtil {
     }
 
     public static String convertToCamelCase(String input) {
+        return convertToCamelCase(input, false);
+    }
+
+    public static String convertToCamelCase(String input, boolean capitalize) {
         final Pattern pattern = Pattern.compile("(_)([a-z])");
         Matcher matcher = pattern.matcher(input);
         StringBuilder sb = new StringBuilder();
@@ -53,6 +58,9 @@ public final class StringUtil {
             matcher.appendReplacement(sb, matcher.group(2).toUpperCase());
         }
         matcher.appendTail(sb);
+        if (capitalize) {
+            return capitalize(sb.toString());
+        }
         return sb.toString();
     }
 
@@ -62,4 +70,12 @@ public final class StringUtil {
         Matcher matcher = pattern.matcher(input);
         return matcher.replaceAll(replacementPattern).toLowerCase();
     }
+
+    public static String capitalize(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
 }
