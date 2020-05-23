@@ -5,9 +5,6 @@ val h2Version = "1.4.200"
 plugins {
 	`java-library`
 	id("java")
-	    
-    // https://github.com/xvik/gradle-java-lib-plugin
-    // id("ru.vyarus.java-lib") version "2.1.0"
 }
 
 group = "org.pensatocode.simplicity"
@@ -25,8 +22,9 @@ dependencies {
     implementation("org.springframework:spring-web:${springVersion}")
     implementation("org.springframework:spring-beans:${springVersion}")
     implementation("org.springframework:spring-context:${springVersion}")
-    implementation("org.springframework:spring-jdbc:${springVersion}")
-    implementation("org.springframework.data:spring-data-commons:${springBootVersion}")    
+
+    api("org.springframework:spring-jdbc:${springVersion}")
+    api("org.springframework.data:spring-data-commons:${springBootVersion}")
 
     // Database
 //    implementation("postgresql:postgresql:9.1-901-1.jdbc4")
