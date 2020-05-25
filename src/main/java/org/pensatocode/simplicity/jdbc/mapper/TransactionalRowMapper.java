@@ -18,6 +18,9 @@ package org.pensatocode.simplicity.jdbc.mapper;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -70,5 +73,44 @@ public abstract class TransactionalRowMapper<T> implements RowMapper<T> {
             }
         }
         return result;
+    }
+
+    protected java.util.Date convertToDate(java.sql.Timestamp timestamp) {
+        if(timestamp == null) {
+            return null;
+        }
+        return new java.util.Date(timestamp.getNanos());
+    }
+
+    protected char convertToChar(String str) {
+        if(str == null) {
+            return '\u0000';
+        }
+        char[] array = str.toCharArray();
+        if(array.length == 0) {
+            return '\u0000';
+        }
+        return array[0];
+    }
+
+    protected LocalDate convertToLocalDate(java.sql.Date date) {
+        if(date == null) {
+            return null;
+        }
+        return date.toLocalDate();
+    }
+
+    protected LocalTime convertToLocalTime(java.sql.Time time) {
+        if(time == null) {
+            return null;
+        }
+        return time.toLocalTime();
+    }
+
+    protected LocalDateTime convertToLocalDateTime(java.sql.Timestamp timestamp) {
+        if(timestamp == null) {
+            return null;
+        }
+        return timestamp.toLocalDateTime();
     }
 }
