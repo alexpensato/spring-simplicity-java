@@ -40,10 +40,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,8 +65,7 @@ public abstract class AbstractJdbcRepository<T, ID extends Serializable> impleme
     protected String idName;
 
     private Boolean initialized = false;
-    private LocalDateTime lastUpdated = LocalDateTime.now();
-    Long counter = -1L;
+    AtomicLong counter = new AtomicLong(-1L);
 
     public AbstractJdbcRepository(@Autowired JdbcTemplate jdbcTemplate, TransactionalRowMapper<T> rowMapper, String tableName, String fromClause, Class<T> jClass, String idName) {
         this.jdbcTemplate = jdbcTemplate;
@@ -118,11 +117,16 @@ public abstract class AbstractJdbcRepository<T, ID extends Serializable> impleme
     @Override
     @Transactional(readOnly=true)
     public Long count() {
-        Long count = jdbcTemplate.queryForObject(sqlGenerator.count(tableDesc), Long.class);
-        resetCounter(count);
-        return count;
+        return jdbcTemplate.queryForObject(sqlGenerator.count(tableDesc), Long.class);
     }
 
+    @Override
+    public Long getAtomicCount() {
+        if (counter.get() == -1L) {
+            startCounter();
+        }
+        return counter.get();
+    }
 
     @Override
     @Transactional(readOnly=true)
@@ -150,10 +154,10 @@ public abstract class AbstractJdbcRepository<T, ID extends Serializable> impleme
     @Transactional(readOnly=true)
     public Page<T> findAll(Pageable pageable) {
         List<T> list = jdbcTemplate.query(sqlGenerator.selectAll(tableDesc, pageable), rowMapper);
-        if (counter == -1L) {
-            count();
+        if (counter.get() == -1L) {
+            startCounter();
         }
-        return new PageImpl<>(list, pageable, counter);
+        return new PageImpl<>(list, pageable, counter.get());
     }
 
     @Override
@@ -172,10 +176,10 @@ public abstract class AbstractJdbcRepository<T, ID extends Serializable> impleme
     @Transactional(readOnly=true)
     public Page<T> findAll(String whereClause, Pageable pageable) {
         List<T> list = jdbcTemplate.query(sqlGenerator.selectAll(tableDesc, whereClause, pageable), rowMapper);
-        if (counter == -1L) {
-            count();
+        if (counter.get() == -1L) {
+            startCounter();
         }
-        return new PageImpl<>(list, pageable, counter);
+        return new PageImpl<>(list, pageable, counter.get());
     }
 
     @Override
@@ -195,7 +199,7 @@ public abstract class AbstractJdbcRepository<T, ID extends Serializable> impleme
     @Override
     public Integer delete(ID id) {
         Integer lineCount = jdbcTemplate.update(sqlGenerator.deleteByPK(tableDesc), id);
-        decreaseCounter();
+        decreaseCounter(lineCount);
         return lineCount;
     }
 
@@ -277,19 +281,20 @@ public abstract class AbstractJdbcRepository<T, ID extends Serializable> impleme
         return id;
     }
 
-    ////////// Couting methods //////////
+    ////////// Counting methods //////////
 
-    public void increaseCounter() {
-        counter += 1;
+    protected synchronized void startCounter() {
+        counter.compareAndSet(-1L, count());
     }
 
-    public void decreaseCounter() {
-        counter -= 1;
+    protected void increaseCounter() {
+        counter.addAndGet(1L);
     }
 
-    private void resetCounter(Long value) {
-        this.counter = value;
-        this.lastUpdated = LocalDateTime.now();
+    protected void decreaseCounter(Integer lineCount) {
+        if (lineCount > 0) {
+            counter.addAndGet(-1L * lineCount);
+        }
     }
 
     ////////// Extra methods //////////

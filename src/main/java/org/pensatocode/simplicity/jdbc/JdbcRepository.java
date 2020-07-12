@@ -35,6 +35,8 @@ public interface JdbcRepository<T, ID extends Serializable> {
 
     Long count();
 
+    Long getAtomicCount();
+
     Boolean exists(ID id);
 
     List<T> findAll();
