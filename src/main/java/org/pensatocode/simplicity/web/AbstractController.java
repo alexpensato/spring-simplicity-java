@@ -12,7 +12,7 @@ import java.io.Serializable;
 @RestController
 public abstract class AbstractController<T, ID extends Serializable> {
 
-    private JdbcRepository<T, ID> repository;
+    protected final JdbcRepository<T, ID> repository;
 
     public AbstractController(@Autowired JdbcRepository<T, ID> repository) {
         this.repository = repository;
